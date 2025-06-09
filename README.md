@@ -50,6 +50,7 @@ Where the provided flags are:
 - `--icon-only` - Only generate icons
 - `--splash-only` - Only generate splash screens
 - `--dark` - Enable dark mode assets (e.g. logo-dark.png)
+- `--androidFlavor` - Specify the Android product flavor where generated assets will be created (default: `main`)
 
 ### Usage - Custom Mode
 
