@@ -21,6 +21,14 @@ import {
 } from './assets';
 import * as IosAssetTemplates from './assets';
 
+function ensureIosPath(project: Project): string {
+  const path = project.config.ios?.path;
+  if (!path) {
+    throw new BadProjectError('iOS project path not found');
+  }
+  return path;
+}
+
 export const IOS_APP_ICON_SET_NAME = 'AppIcon';
 export const IOS_APP_ICON_SET_PATH = `App/Assets.xcassets/${IOS_APP_ICON_SET_NAME}.appiconset`;
 export const IOS_SPLASH_IMAGE_SET_NAME = 'Splash';
@@ -63,7 +71,7 @@ export class IosAssetGenerator extends AssetGenerator {
       throw new BadPipelineError('Sharp instance not created');
     }
 
-    const iosDir = project.config.ios!.path!;
+    const iosDir = ensureIosPath(project);
 
     // Generate logos
     let logos: OutputAsset[] = [];
@@ -179,7 +187,7 @@ export class IosAssetGenerator extends AssetGenerator {
       throw new BadPipelineError('Sharp instance not created');
     }
 
-    const iosDir = project.config.ios!.path!;
+    const iosDir = ensureIosPath(project);
     const lightDefaultBackground = '#ffffff';
     const generated = await Promise.all(
       icons.map(async (icon) => {
@@ -242,7 +250,7 @@ export class IosAssetGenerator extends AssetGenerator {
     const generated: OutputAsset[] = [];
 
     for (const assetMeta of assetMetas) {
-      const iosDir = project.config.ios!.path!;
+      const iosDir = ensureIosPath(project);
       const dest = join(iosDir, IOS_SPLASH_IMAGE_SET_PATH, assetMeta.name);
 
       const outputInfo = await pipe.resize(assetMeta.width, assetMeta.height).png().toFile(dest);
@@ -273,7 +281,7 @@ export class IosAssetGenerator extends AssetGenerator {
   }
 
   private async updateIconsContentsJson(generated: OutputAsset[], project: Project) {
-    const assetsPath = join(project.config.ios!.path!, IOS_APP_ICON_SET_PATH);
+    const assetsPath = join(ensureIosPath(project), IOS_APP_ICON_SET_PATH);
     const contentsJsonPath = join(assetsPath, 'Contents.json');
     const json = await readFile(contentsJsonPath, { encoding: 'utf-8' });
 
@@ -304,7 +312,7 @@ export class IosAssetGenerator extends AssetGenerator {
   }
 
   private async updateSplashContentsJson(generated: OutputAsset[], project: Project) {
-    const contentsJsonPath = join(project.config.ios!.path!, IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json');
+    const contentsJsonPath = join(ensureIosPath(project), IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json');
     const json = await readFile(contentsJsonPath, { encoding: 'utf-8' });
 
     const parsed = JSON.parse(json);
@@ -334,7 +342,7 @@ export class IosAssetGenerator extends AssetGenerator {
   }
 
   private async updateSplashContentsJsonDark(generated: OutputAsset[], project: Project) {
-    const contentsJsonPath = join(project.config.ios!.path!, IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json');
+    const contentsJsonPath = join(ensureIosPath(project), IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json');
     const json = await readFile(contentsJsonPath, { encoding: 'utf-8' });
 
     const parsed = JSON.parse(json);
