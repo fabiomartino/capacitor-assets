@@ -29,10 +29,24 @@ function ensureIosPath(project: Project): string {
   return path;
 }
 
+function getIosTarget(project: Project): string {
+  const iosPath = ensureIosPath(project);
+  const match = iosPath.match(/ios\/([^/]+)/); // extrae el target desde 'ios/MyTarget'
+  return match?.[1] ?? 'App';
+}
+
+function getAppIconSetPath(project: Project): string {
+  const target = getIosTarget(project);
+  return `${target}/Assets.xcassets/${IOS_APP_ICON_SET_NAME}.appiconset`;
+}
+
+function getSplashImageSetPath(project: Project): string {
+  const target = getIosTarget(project);
+  return `${target}/Assets.xcassets/${IOS_SPLASH_IMAGE_SET_NAME}.imageset`;
+}
+
 export const IOS_APP_ICON_SET_NAME = 'AppIcon';
-export const IOS_APP_ICON_SET_PATH = `App/Assets.xcassets/${IOS_APP_ICON_SET_NAME}.appiconset`;
 export const IOS_SPLASH_IMAGE_SET_NAME = 'Splash';
-export const IOS_SPLASH_IMAGE_SET_PATH = `App/Assets.xcassets/${IOS_SPLASH_IMAGE_SET_NAME}.imageset`;
 
 export class IosAssetGenerator extends AssetGenerator {
   constructor(options: AssetGeneratorOptions = {}) {
@@ -95,7 +109,7 @@ export class IosAssetGenerator extends AssetGenerator {
       const lightSplashesGenerated: OutputAsset[] = [];
 
       for (const lightSplash of lightSplashes) {
-        const lightDest = join(iosDir, IOS_SPLASH_IMAGE_SET_PATH, lightSplash.name);
+        const lightDest = join(iosDir, getSplashImageSetPath(project), lightSplash.name);
 
         const canvas = sharp({
           create: {
@@ -140,7 +154,7 @@ export class IosAssetGenerator extends AssetGenerator {
     const darkSplashesGenerated: OutputAsset[] = [];
 
     for (const darkSplash of darkSplashes) {
-      const darkDest = join(iosDir, IOS_SPLASH_IMAGE_SET_PATH, darkSplash.name);
+      const darkDest = join(iosDir, getSplashImageSetPath(project), darkSplash.name);
       const canvas = sharp({
         create: {
           width: darkSplash.width ?? 0,
@@ -191,7 +205,7 @@ export class IosAssetGenerator extends AssetGenerator {
     const lightDefaultBackground = '#ffffff';
     const generated = await Promise.all(
       icons.map(async (icon) => {
-        const dest = join(iosDir, IOS_APP_ICON_SET_PATH, icon.name);
+        const dest = join(iosDir, getAppIconSetPath(project), icon.name);
 
         const outputInfo = await pipe
           .resize(icon.width, icon.height)
@@ -251,7 +265,7 @@ export class IosAssetGenerator extends AssetGenerator {
 
     for (const assetMeta of assetMetas) {
       const iosDir = ensureIosPath(project);
-      const dest = join(iosDir, IOS_SPLASH_IMAGE_SET_PATH, assetMeta.name);
+      const dest = join(iosDir, getSplashImageSetPath(project), assetMeta.name);
 
       const outputInfo = await pipe.resize(assetMeta.width, assetMeta.height).png().toFile(dest);
 
@@ -281,7 +295,7 @@ export class IosAssetGenerator extends AssetGenerator {
   }
 
   private async updateIconsContentsJson(generated: OutputAsset[], project: Project) {
-    const assetsPath = join(ensureIosPath(project), IOS_APP_ICON_SET_PATH);
+    const assetsPath = join(ensureIosPath(project), getAppIconSetPath(project));
     const contentsJsonPath = join(assetsPath, 'Contents.json');
     const json = await readFile(contentsJsonPath, { encoding: 'utf-8' });
 
@@ -312,7 +326,7 @@ export class IosAssetGenerator extends AssetGenerator {
   }
 
   private async updateSplashContentsJson(generated: OutputAsset[], project: Project) {
-    const contentsJsonPath = join(ensureIosPath(project), IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json');
+    const contentsJsonPath = join(ensureIosPath(project), getSplashImageSetPath(project), 'Contents.json');
     const json = await readFile(contentsJsonPath, { encoding: 'utf-8' });
 
     const parsed = JSON.parse(json);
@@ -342,7 +356,7 @@ export class IosAssetGenerator extends AssetGenerator {
   }
 
   private async updateSplashContentsJsonDark(generated: OutputAsset[], project: Project) {
-    const contentsJsonPath = join(ensureIosPath(project), IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json');
+    const contentsJsonPath = join(ensureIosPath(project), getSplashImageSetPath(project), 'Contents.json');
     const json = await readFile(contentsJsonPath, { encoding: 'utf-8' });
 
     const parsed = JSON.parse(json);

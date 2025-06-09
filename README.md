@@ -51,6 +51,7 @@ Where the provided flags are:
 - `--splash-only` - Only generate splash screens
 - `--dark` - Enable dark mode assets (e.g. logo-dark.png)
 - `--androidFlavor` - Specify the Android product flavor where generated assets will be created (default: `main`)
+- `--iosTarget <name>`    Override the iOS target directory (default: `App`)
 
 ### Usage - Custom Mode
 

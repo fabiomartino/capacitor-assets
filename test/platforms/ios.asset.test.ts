@@ -2,12 +2,17 @@ import { copy, pathExists, readFile, rmSync as rm } from '@ionic/utils-fs';
 import tempy from 'tempy';
 
 import { Context, loadContext } from '../../src/ctx';
-import { IosAssetGenerator, IOS_SPLASH_IMAGE_SET_PATH } from '../../src/platforms/ios';
+import { IosAssetGenerator } from '../../src/platforms/ios';
 import { AssetKind, Assets, Format, IosContents, IosOutputAssetTemplate } from '../../src/definitions';
 import * as IosAssets from '../../src/platforms/ios/assets';
 import sharp from 'sharp';
 import { join } from 'path';
 import { OutputAsset } from '../../src/output-asset';
+import { Project } from '../../src/project';
+
+function getSplashContentsJsonPath(project: Project, target = 'App'): string {
+  return join(project.config.ios!.path!, target, 'Assets.xcassets', 'Splash.imageset', 'Contents.json');
+}
 
 describe('iOS Asset Test', () => {
   let ctx: Context;
@@ -66,7 +71,7 @@ describe('iOS Asset Test', () => {
     expect(await pathExists(dest ?? '')).toBe(true);
 
     const contentsJson = JSON.parse(
-      await readFile(join(ctx.project.config.ios!.path!, IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json'), {
+      await readFile(getSplashContentsJsonPath(ctx.project), {
         encoding: 'utf-8',
       }),
     ) as IosContents;
@@ -140,7 +145,7 @@ describe('iOS Asset Test - Logo Only', () => {
     expect(generatedAssets.length).toBe(assetTemplates.length);
 
     const contentsJson = JSON.parse(
-      await readFile(join(ctx.project.config.ios!.path!, IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json'), {
+      await readFile(getSplashContentsJsonPath(ctx.project), {
         encoding: 'utf-8',
       }),
     ) as IosContents;
@@ -173,7 +178,7 @@ describe('iOS Asset Test - Logo Only', () => {
     expect(generatedAssets.length).toBe(3);
 
     const contentsJson = JSON.parse(
-      await readFile(join(ctx.project.config.ios!.path!, IOS_SPLASH_IMAGE_SET_PATH, 'Contents.json'), {
+      await readFile(getSplashContentsJsonPath(ctx.project), {
         encoding: 'utf-8',
       }),
     ) as IosContents;

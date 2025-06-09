@@ -15,7 +15,6 @@ export * from './tasks/generate';
 
 export * from './platforms/ios';
 export * from './platforms/android';
-export * from './platforms/android';
 
 export async function run(): Promise<void> {
   try {
@@ -84,6 +83,7 @@ export function runProgram(ctx: Context): void {
       'Android product flavor name where generated assets will be created. Defaults to "main".',
     )
     .option('--iosProject <dir>', 'Path to iOS project (defaults to "ios/App")')
+    .option('--iosTarget <name>', 'Override the iOS target name (default: App)')
     .option('--androidProject <dir>', 'Path to Android project (defaults to "android")')
     /*
     .option(
