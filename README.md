@@ -63,12 +63,16 @@ assets/
 ├── icon-foreground.png
 ├── icon-background.png
 ├── splash.png
-└── splash-dark.png
+├── splash-dark.png
+└── notification.png
+
 ```
 
 - `assets/icon-only.(png|jpg)` must be at least 1024×1024px
 - `assets/icon-(foreground|background).(png|jpg)` must be at least 1024×1024px
 - `assets/splash[-dark].(png|jpg)` must be at least 2732×2732px
+- `assets/notification.(png|svg)` must be at least 96×96px and fully transparent (required by Android for notification icons)
+
 
 To generate resources with all the default options, just run:
 

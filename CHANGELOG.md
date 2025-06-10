@@ -1,5 +1,19 @@
 # @capacitor/assets
 
+## 3.0.7
+
+### Minor Changes
+
+- Add support for `--iosTarget` to specify a custom iOS target folder (e.g. MyTarget instead of App). Useful for multi-target Xcode projects.
+
+### Patch Changes
+
+- Preserve transparency in `ic_launcher_foreground.xml` when using transparent SVGs
+- Avoid generating `ic_launcher_background.xml` with `android:color="null"` when no color or image is provided
+- Skip `sharp.flatten()` if asset is already transparent (adaptive icons foreground)
+- Improve internal routing logic to support Android product flavors correctly in XML paths
+- Improve test compatibility with dynamic iOS targets
+
 ## 3.0.4
 
 ### Patch Changes
